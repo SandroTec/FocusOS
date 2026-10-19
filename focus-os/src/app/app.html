@@ -1,0 +1,22 @@
+<div class="app-shell">
+  <aside class="sidebar" aria-label="Main navigation">
+    <a class="brand" routerLink="/dashboard" aria-label="FocusOS home">Focus<span>OS</span></a>
+    <nav class="nav-list">
+      <a class="nav-item" routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" aria-label="Dashboard" title="Dashboard"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg><span>Dashboard</span></a>
+      <a class="nav-item" routerLink="/focus" routerLinkActive="active" aria-label="Focus" title="Focus"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg><span>Focus</span></a>
+      <a class="nav-item" routerLink="/sports" routerLinkActive="active" aria-label="Sports" title="Sports"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M7 3.8 9 9l-4 3m12-8.2L15 9l4 3m-10 7-2-5m6 5 2-5M9 9h6l2 6-5 4-5-4z"/></svg><span>Sports</span></a>
+      <a class="nav-item" routerLink="/projects" routerLinkActive="active" aria-label="Projects" title="Projects"><svg viewBox="0 0 24 24"><path d="M4 7h6l2 2h8a1 1 0 0 1 1 1v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a1 1 0 0 1 1-1Z"/><path d="M3 11h18"/></svg><span>Projects</span></a>
+      <a class="nav-item" routerLink="/habits" routerLinkActive="active" aria-label="Habits" title="Habits"><svg viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9a7 7 0 0 1 12-2L20 9M4 15l2.5 2a7 7 0 0 0 12-2"/></svg><span>Habits</span></a>
+    </nav>
+    <div class="sidebar-bottom"><span>PERSONAL WORKSPACE</span><i class="avatar">S</i></div>
+  </aside>
+  <main class="main-content">
+    <header class="topbar">
+      <div><p class="eyebrow">YOUR PERSONAL ANALYTICS</p><h1>{{ pageTitle }}</h1></div>
+      <div class="topbar-actions">@if (store.data().timer.status !== 'idle') { <a class="timer-chip" routerLink="/focus"><i></i>{{ timerLabel() }}<span>{{ store.data().timer.status === 'running' ? 'Running' : 'Paused' }}</span></a> }<span class="live-status"><i></i> Your data stays on this device</span><div class="avatar">S</div></div>
+    </header>
+    <div class="page-date">{{ dateLabel }}</div>
+    <router-outlet />
+    <footer class="footer-note"><span><i></i> Your data, in sync</span><span>Saved on this device <b>·</b> FocusOS MVP</span></footer>
+  </main>
+</div>

@@ -1,0 +1,27 @@
+<section class="dashboard-grid" aria-label="FocusOS dashboard">
+  <article class="panel focus-panel">
+    <div class="panel-heading"><div><p class="eyebrow">YOUR PERFORMANCE</p><h2>Focus</h2></div><a class="subtle-link" routerLink="/focus">Open tracker ↗</a></div>
+    <div class="focus-content">
+      <div class="focus-ring" [style.background]="'conic-gradient(from 218deg, #35dbd0, #42e7bd ' + (score() * 0.28) + '%, #40d9e7 ' + (score() * 0.52) + '%, #8772ff ' + (score() * 0.72) + '%, #ff6382 ' + score() + '%, transparent ' + score() + '% 100%)'"><div class="ring-inner"><strong>{{ score() }}<span>%</span></strong><small>FOCUS SCORE</small></div></div>
+      <div class="focus-stats"><div><span class="stat-label">Deep work this week</span><strong>{{ hours(metrics().deepMinutes) }}</strong><small>{{ metrics().sessions.length }} recorded sessions</small></div><div><span class="stat-label">Flow rating</span><strong class="flow">{{ metrics().sessions.length ? 'Active' : '—' }}</strong><small><span class="pulse-dot"></span> Based on your log</small></div></div>
+    </div><div class="panel-glow"></div>
+  </article>
+
+  <article class="panel habit-panel"><div class="panel-heading"><div><p class="eyebrow">CONSISTENCY, DAILY</p><h2>Habit grid</h2></div><a class="subtle-link" routerLink="/habits">Manage ↗</a></div>
+    @if (activeHabits().length) {
+      <div class="habit-grid"><span></span>@for (day of days; track day) { <span class="day-label">{{ day }}</span> } @for (habit of activeHabits(); track habit.id) { <span class="habit-name">{{ habit.name }}</span>@for (day of days; track $index) { <span class="habit-cell" [class]="isComplete(habit.id, $index) ? 'habit-cell ' + habit.color : 'habit-cell'"></span> } }</div>
+      <div class="habit-legend"><span><i class="legend-dot mint"></i> {{ metrics().habitRate }}% this week</span><span><a routerLink="/habits">Check in today →</a></span></div>
+    } @else { <div class="empty-state"><p>No habits yet. Add a few daily habits to start building a rhythm.</p><a class="action-link" routerLink="/habits">Create your first habit</a></div> }
+  </article>
+
+  <article class="panel biometrics-panel"><div class="panel-heading chart-heading"><div><p class="eyebrow">THIS WEEK</p><h2>Focus time</h2></div><a class="subtle-link" routerLink="/focus">View sessions ↗</a></div>
+    <div class="chart-meta"><span><i class="legend-dot cyan"></i> Focus <strong>{{ hours(metrics().weeklyMinutes) }}</strong></span><span class="chart-trend">{{ weekComparison() }}</span></div>
+    <div class="focus-bars">@for (day of days; track day; let index = $index) { <div class="focus-bar"><span>{{ hours(metrics().daily[index]) }}</span><i [style.height]="height(metrics().daily[index])"></i><small>{{ day }}</small></div> }</div>
+  </article>
+
+  <article class="panel weekly-panel"><div class="panel-heading"><div><p class="eyebrow">YOUR WEEK AT A GLANCE</p><h2>Activity</h2></div><span class="trend-pill">{{ metrics().sportCount }} workouts</span></div>
+    <div class="activity-stats"><div><span class="legend-dot cyan"></span><strong>{{ hours(metrics().learning) }}</strong><small>Learning</small></div><div><span class="legend-dot violet"></span><strong>{{ hours(metrics().projectMinutes) }}</strong><small>Projects</small></div><div><span class="legend-dot orange"></span><strong>{{ metrics().habitRate }}%</strong><small>Habit completion</small></div></div>
+    <div class="goal-card"><div class="goal-copy"><span>Weekly deep work goal</span><strong>{{ hours(metrics().deepMinutes) }} <small>of {{ hours(metrics().goal) }}</small></strong></div><div class="progress-track"><span [style.width.%]="goalPercent()"></span></div></div>
+    <p class="insight-note"><b>✦ A small insight</b>{{ insight() }}</p>
+  </article>
+</section>

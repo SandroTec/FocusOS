@@ -1,0 +1,18 @@
+<section class="page-layout">
+  <div class="page-intro"><p class="eyebrow">MOVE WITH INTENTION</p><h2>Sports tracker</h2><p>Record workouts and keep an eye on your weekly activity.</p></div>
+  <div class="summary-strip"><div><span>Workouts this week</span><strong>{{ weekStats().count }}</strong></div><div><span>Time in motion</span><strong>{{ durationLabel(weekStats().minutes) }}</strong></div><div><span>Total entries</span><strong>{{ data().sports.length }}</strong></div></div>
+  <div class="tracker-grid sports-layout">
+    <article class="panel form-panel"><div class="panel-heading"><div><p class="eyebrow">LOG A WORKOUT</p><h3>{{ editingId ? 'Edit activity' : 'New activity' }}</h3></div></div>
+      <form class="form-stack" (ngSubmit)="add()"><label>Sport or activity<input name="sport" [(ngModel)]="sport" required maxlength="48" list="sports-options" placeholder="e.g. Running, Yoga, Cycling"><datalist id="sports-options"><option value="Running"><option value="Strength training"><option value="Cycling"><option value="Yoga"><option value="Swimming"><option value="Walking"></datalist></label>
+        <div class="form-row"><label>Duration (minutes)<input name="duration" type="number" [(ngModel)]="duration" min="1" max="1440" required></label><label>Date<input name="date" type="date" [(ngModel)]="date" required></label></div>
+        <label>Intensity <span class="field-hint">1 easy · 5 hard</span><input name="intensity" type="number" [(ngModel)]="intensity" min="1" max="5" required></label>
+        <label>Notes <span class="field-hint">Optional</span><textarea name="notes" [(ngModel)]="notes" rows="3" maxlength="300" placeholder="How did it feel?"></textarea></label>
+        <div class="button-row"><button class="primary-button" type="submit">{{ editingId ? 'Save changes' : 'Save activity' }}</button>@if (editingId) { <button class="secondary-button" type="button" (click)="cancelEdit()">Cancel</button> }</div>
+      </form>
+    </article>
+    <article class="panel session-list sports-history"><div class="panel-heading"><div><p class="eyebrow">YOUR MOVEMENT</p><h3>Recent workouts</h3></div></div>
+      @if (data().sports.length) { @for (entry of data().sports; track entry.id) { <div class="session-row sport-row"><div class="sport-mark">↗</div><div class="session-info"><strong>{{ entry.sport }}</strong><span>{{ entry.date | date:'EEE, d MMM yyyy' }} · Intensity {{ entry.intensity }}/5</span>@if (entry.notes) { <small>{{ entry.notes }}</small> }</div><b class="session-duration">{{ durationLabel(entry.durationMinutes) }}</b><button class="row-button" (click)="edit(entry)">Edit</button><button class="row-button danger" (click)="store.deleteSport(entry.id)">Delete</button></div> } }
+      @else { <div class="empty-state"><p>Your workout log is empty. Add an activity to get started.</p></div> }
+    </article>
+  </div>
+</section>

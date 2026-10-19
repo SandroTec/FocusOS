@@ -1,0 +1,20 @@
+<section class="page-layout">
+  <div class="page-intro"><p class="eyebrow">MAKE PROGRESS VISIBLE</p><h2>Projects</h2><p>Connect focus sessions to the work that matters.</p></div>
+  <div class="summary-strip"><div><span>Active projects</span><strong>{{ activeCount() }}</strong></div><div><span>All projects</span><strong>{{ data().projects.length }}</strong></div><div><span>Time tracked</span><strong>{{ durationLabel(allTrackedMinutes) }}</strong></div></div>
+  <article class="panel form-panel"><div class="panel-heading"><div><p class="eyebrow">START SOMETHING</p><h3>Create a project</h3></div></div>
+    <form class="inline-form project-form" (ngSubmit)="add()"><label>Project name<input name="name" [(ngModel)]="name" required maxlength="64" placeholder="e.g. Portfolio redesign"></label><label>Description<input name="description" [(ngModel)]="description" maxlength="160" placeholder="What does success look like?"></label><label>Accent color<select name="color" [(ngModel)]="color">@for (option of palette; track option) { <option [value]="option">{{ option }}</option> }</select></label><button class="primary-button" type="submit">Create project</button></form>
+  </article>
+  <div class="project-grid">
+    @for (project of data().projects; track project.id) {
+      <article class="panel project-card" [style.--project-color]="project.color">
+        <div class="project-card-head"><i></i><select [value]="project.status" [attr.aria-label]="project.name + ' status'" (change)="statusChange(project.id, $event)"><option>Active</option><option>Paused</option><option>Completed</option></select></div>
+        @if (editingProjectId === project.id) {
+          <div class="project-edit"><label>Name<input name="editProjectName" [(ngModel)]="editName" maxlength="64"></label><label>Description<input name="editProjectDescription" [(ngModel)]="editDescription" maxlength="160"></label><label>Color<select name="editProjectColor" [(ngModel)]="editColor">@for (option of palette; track option) { <option [value]="option">{{ option }}</option> }</select></label><button class="row-button" (click)="saveEdit(project)">Save</button><button class="row-button" (click)="editingProjectId = null">Cancel</button></div>
+        } @else {
+          <h3>{{ project.name }}</h3><p>{{ project.description || 'No description added.' }}</p>
+          <div class="project-card-foot"><span>Tracked time</span><strong>{{ durationLabel(totalMinutes(project.id)) }}</strong><button class="row-button" (click)="beginEdit(project)">Edit</button><button class="row-button danger" (click)="store.deleteProject(project.id)">Delete</button></div>
+        }
+      </article>
+    } @empty { <article class="panel empty-state project-empty"><p>No projects yet. Create one to group related focus sessions.</p></article> }
+  </div>
+</section>
