@@ -2,25 +2,47 @@
   <div class="page-intro"><p class="eyebrow">STAY IN THE ZONE</p><h2>Focus tracker</h2><p>Start a session or capture time you have already spent.</p></div>
   <div class="tracker-grid">
     <article class="panel timer-card">
-      <p class="eyebrow">FOCUS TIMER</p>
-      <div class="timer-display">{{ formatTime(elapsed()) }}</div>
-      @if (data().timer.status === 'idle') {
-        <div class="form-stack">
-          <label>What are you focusing on?<input [(ngModel)]="title" maxlength="80" placeholder="e.g. Finish project proposal"></label>
-          <div class="form-row"><label>Category<select [(ngModel)]="category">@for (option of categoryOptions; track option) { <option [ngValue]="option">{{ option }}</option> }</select></label><label>Project<select [(ngModel)]="projectId"><option value="">No project</option>@for (project of data().projects; track project.id) { @if (project.status === 'Active') { <option [value]="project.id">{{ project.name }}</option> } }</select></label></div>
-          <button class="primary-button" (click)="start()">Start focus session</button>
-        </div>
+      <div class="timer-tabs" role="tablist" aria-label="Focus session steps">
+        <button role="tab" [class.active-tab]="activeTab() === 'timer'" [attr.aria-selected]="activeTab() === 'timer'" (click)="activeTab.set('timer')"><span>Timer</span></button>
+        <button role="tab" [class.active-tab]="activeTab() === 'rating'" [attr.aria-selected]="activeTab() === 'rating'" [disabled]="!data().pendingSession" (click)="activeTab.set('rating')"><span>Bewertung</span></button>
+      </div>
+      @if (activeTab() === 'rating') {
+        <section role="tabpanel" class="rating-step">
+          @if (data().pendingSession; as pending) {
+            <p class="eyebrow">SESSION REVIEW</p><h3 class="review-title">{{ pending.title }}</h3><p class="muted-note">{{ pending.category === 'Project' ? 'Project work' : pending.category }}@if (pending.isDeepWork) { · Deep Work } · {{ durationLabel(pending.durationMinutes, pending.durationSeconds) }}</p>
+            <fieldset class="rating-field"><legend>Wie fokussiert hast du dich gefühlt?</legend><div class="rating-stars">@for (score of [1, 2, 3, 4, 5]; track score) { <button type="button" [class.selected]="rating >= score" [attr.aria-label]="score + ' von 5' " [attr.aria-pressed]="rating === score" (click)="rating = score">★</button> }</div><div class="rating-captions"><span>Abgelenkt</span><span>Im Flow</span></div></fieldset>
+            <label class="review-notes">Notiz <span class="field-hint">Optional</span><textarea [(ngModel)]="ratingNotes" maxlength="300" rows="3" placeholder="Was lief gut? Was möchtest du festhalten?"></textarea></label>
+            <div class="button-row"><button class="primary-button" [disabled]="rating < 1" (click)="saveTimerReview()">Bewerten &amp; Session speichern</button></div>
+          } @else { <div class="empty-state"><p>Beende erst eine Session, um sie hier zu bewerten.</p></div> }
+        </section>
       } @else {
-        <div class="running-label"><i></i> {{ data().timer.status === 'running' ? 'Session in progress' : 'Session paused' }}</div>
-        <h3 class="timer-title">{{ data().timer.title }}</h3>
-        <div class="timer-actions">@if (data().timer.status === 'running') { <button class="secondary-button" (click)="store.pauseTimer()">Pause</button> } @else { <button class="primary-button" (click)="store.resumeTimer()">Resume</button> } <button class="stop-button" (click)="stop()">Finish &amp; save</button></div>
-        <p class="muted-note">Timer is saved locally and continues accurately when you move between pages.</p>
+        <section role="tabpanel">
+          <p class="eyebrow">FOCUS TIMER</p>
+          <div class="timer-display">{{ formatTime(elapsed()) }}</div>
+          @if (data().pendingSession) {
+            <div class="pending-notice"><strong>Session wartet auf deine Bewertung.</strong><span>Bewerte sie, damit sie in deiner Session-Liste erscheint.</span><button class="secondary-button" (click)="activeTab.set('rating')">Zur Bewertung</button></div>
+          } @else if (data().timer.status === 'idle') {
+            <form class="form-stack" #timerForm="ngForm" (ngSubmit)="start()">
+              <label>Was möchtest du fokussieren?<input name="timerTitle" [(ngModel)]="title" required maxlength="80" placeholder="z. B. Projektvorschlag fertigstellen"></label>
+              <div class="form-row"><label>Activity area<select name="timerCategory" [(ngModel)]="category" required><option [ngValue]="''" disabled>Choose area</option>@for (option of categoryOptions; track option) { <option [ngValue]="option">{{ option === 'Project' ? 'Project work' : option }}</option> }</select></label><label>Project link<select name="timerProject" [(ngModel)]="projectId" required><option value="">Choose project link</option><option value="none">No project</option>@for (project of data().projects; track project.id) { @if (project.status === 'Active') { <option [value]="project.id">{{ project.name }}</option> } }</select></label></div>
+              <label class="toggle-field"><input name="timerDeepWork" type="checkbox" [(ngModel)]="timerIsDeepWork"><span>Deep Work session</span></label>
+              <button class="primary-button" type="submit" [disabled]="!timerForm.valid">Fokus-Session starten</button>
+            </form>
+          } @else {
+            <div class="running-label"><i></i> {{ data().timer.status === 'running' ? 'Session läuft' : 'Session pausiert' }}</div>
+            <h3 class="timer-title">{{ data().timer.title }}</h3>
+            <p class="timer-context">{{ data().timer.category === 'Project' ? 'Project work' : data().timer.category }}@if (data().timer.isDeepWork) { · Deep Work }@if (data().timer.projectId) { · {{ projectName(data().timer.projectId) }} }</p>
+            <div class="timer-actions">@if (data().timer.status === 'running') { <button class="secondary-button" (click)="store.pauseTimer()">Pause</button> } @else { <button class="primary-button" (click)="store.resumeTimer()">Fortsetzen</button> } <button class="stop-button" (click)="stop()">Beenden &amp; bewerten</button></div>
+            <p class="muted-note">Der Timer bleibt beim Seitenwechsel und nach einem Neuladen erhalten.</p>
+          }
+        </section>
       }
     </article>
     <article class="panel manual-card"><p class="eyebrow">{{ editingId ? 'EDIT SESSION' : 'QUICK ENTRY' }}</p><h3>{{ editingId ? 'Update session' : 'Log a past session' }}</h3>
       <form class="form-stack" (ngSubmit)="submitManual()">
         <label>Session title<input name="manualTitle" [(ngModel)]="manualTitle" required maxlength="80" placeholder="What did you work on?"></label>
-        <div class="form-row"><label>Category<select name="manualCategory" [(ngModel)]="manualCategory">@for (option of categoryOptions; track option) { <option [ngValue]="option">{{ option }}</option> }</select></label><label>Project<select name="manualProject" [(ngModel)]="manualProjectId"><option value="">No project</option>@for (project of data().projects; track project.id) { <option [value]="project.id">{{ project.name }}</option> }</select></label></div>
+        <div class="form-row"><label>Activity area<select name="manualCategory" [(ngModel)]="manualCategory">@for (option of categoryOptions; track option) { <option [ngValue]="option">{{ option === 'Project' ? 'Project work' : option }}</option> }</select></label><label>Project link<select name="manualProject" [(ngModel)]="manualProjectId"><option value="">No project</option>@for (project of data().projects; track project.id) { <option [value]="project.id">{{ project.name }}</option> }</select></label></div>
+        <label class="toggle-field"><input name="manualDeepWork" type="checkbox" [(ngModel)]="manualIsDeepWork"><span>Deep Work session</span></label>
         <div class="form-row"><label>Started<input name="manualStart" type="datetime-local" [(ngModel)]="manualStart" required></label><label>Ended<input name="manualEnd" type="datetime-local" [(ngModel)]="manualEnd" required></label></div>
         <label>Focus rating <span class="field-hint">1–5</span><input name="manualRating" type="number" min="1" max="5" [(ngModel)]="manualRating" required></label>
         <label>Notes <span class="field-hint">Optional</span><textarea name="manualNotes" [(ngModel)]="manualNotes" rows="2" maxlength="300" placeholder="Anything to remember?"></textarea></label>
@@ -30,7 +52,7 @@
   </div>
 
   <article class="panel session-list"><div class="panel-heading"><div><p class="eyebrow">YOUR HISTORY</p><h3>Recent sessions</h3></div><span class="count-pill">{{ data().sessions.length }} total</span></div>
-    @if (data().sessions.length) { @for (session of data().sessions; track session.id) { <div class="session-row"><div class="session-mark"></div><div class="session-info"><strong>{{ session.title }}</strong><span>{{ session.category }} · {{ session.startAt | date:'EEE, d MMM · HH:mm' }}@if (session.projectId) { · {{ projectName(session.projectId) }} }</span></div><b class="session-duration">{{ durationLabel(session.durationMinutes) }}</b><span class="rating">★ {{ session.rating }}</span><button class="row-button" (click)="edit(session)">Edit</button><button class="row-button danger" (click)="store.deleteSession(session.id)">Delete</button></div> } }
+    @if (data().sessions.length) { @for (session of data().sessions; track session.id) { <div class="session-row"><div class="session-mark"></div><div class="session-info"><strong>{{ session.title }}</strong><span>{{ session.category === 'Project' ? 'Project work' : session.category }}@if (session.isDeepWork) { · Deep Work } · {{ session.startAt | date:'EEE, d MMM · HH:mm' }}@if (session.projectId) { · {{ projectName(session.projectId) }} }</span></div><b class="session-duration">{{ durationLabel(session.durationMinutes, session.durationSeconds) }}</b>@if (session.rating) { <span class="rating">★ {{ session.rating }}</span> } @else { <span class="unrated">Bewertung offen</span> }@if (session.rating) { <button class="row-button" (click)="edit(session)">Edit</button> }<button class="row-button danger" (click)="store.deleteSession(session.id)">Delete</button></div> } }
     @else { <div class="empty-state"><p>No sessions yet. Your timer and manual entries will appear here.</p></div> }
   </article>
 </section>

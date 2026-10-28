@@ -1,0 +1,26 @@
+:host { display: block; min-height: 100vh; }
+.auth-page { min-height: 100vh; display: grid; place-items: center; padding: 24px; background: radial-gradient(ellipse at 50% 0, rgba(53, 219, 208, .08), transparent 45%), #080a0d; }
+.auth-card { width: min(100%, 410px); padding: 34px; border: 1px solid rgba(255,255,255,.09); border-radius: 18px; background: rgba(16,19,24,.92); box-shadow: 0 24px 90px rgba(0,0,0,.34); }
+.auth-brand { display: inline-block; margin-bottom: 38px; color: #f3f4f7; font-size: 17px; font-weight: 700; letter-spacing: -.5px; text-decoration: none; }
+.auth-brand span { color: #4ad8c0; }
+.auth-card .eyebrow { margin: 0 0 8px; color: #58d9c2; font-size: 16px; font-weight: 700; letter-spacing: 1.4px; }
+.auth-card h1 { margin: 0; font-size: 27px; font-weight: 550; letter-spacing: -.6px; }
+.auth-copy { margin: 9px 0 25px; color: #8d949e; font-size: 16px; line-height: 1.6; }
+.auth-copy code { color: #b9d7cf; font-size: 16px; }
+.auth-form { display: grid; gap: 15px; }
+.auth-form label { display: grid; gap: 7px; color: #aeb4bd; font-size: 16px; }
+.auth-form input { width: 100%; padding: 12px; border: 1px solid rgba(255,255,255,.1); border-radius: 8px; outline: none; background: #0c0f13; color: #f3f4f7; font: inherit; }
+.auth-form input:focus { border-color: rgba(74,216,192,.6); }
+.auth-form .primary-button { justify-content: center; margin-top: 4px; }
+.auth-form .primary-button:disabled { cursor: wait; opacity: .6; }
+.auth-links { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 14px; margin-top: 22px; color: #858d97; font-size: 16px; }
+.auth-links a,.auth-link { color: #7fe4cf; text-decoration: none; }
+.auth-links a:hover,.auth-link:hover { color: #b1f6e5; }
+.auth-message,.auth-error { padding: 11px 12px; border: 1px solid rgba(74,216,192,.18); border-radius: 8px; background: rgba(74,216,192,.06); color: #a4e8d9; font-size: 16px; line-height: 1.5; }
+.auth-error { border-color: rgba(242,118,146,.22); background: rgba(242,118,146,.06); color: #f29aaf; }
+.auth-link { font-size: 16px; }
+@media (max-width: 480px) { .auth-card { padding: 25px 20px; } }
+@media (max-width: 760px) {
+ .auth-card .eyebrow, .auth-copy, .auth-copy code, .auth-form label, .auth-links, .auth-message,.auth-error, .auth-link { font-size: 14px; } }
+
+

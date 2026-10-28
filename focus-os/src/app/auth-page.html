@@ -1,0 +1,39 @@
+<main class="auth-page">
+  <section class="auth-card">
+    <a class="auth-brand" routerLink="/login">Focus<span>OS</span></a>
+    @if (!auth.configured) {
+      <p class="eyebrow">BACKEND SETUP</p>
+      <h1>Supabase is not configured</h1>
+      <p class="auth-copy">Add the project URL and publishable key to <code>src/environments/environment.ts</code>, then rebuild the app.</p>
+    } @else if (mode === 'callback') {
+      <p class="eyebrow">ACCOUNT CONFIRMATION</p>
+      <h1>Confirming your account</h1>
+      <p class="auth-copy">Your confirmation link is being checked. You can close this page if FocusOS has opened in another tab.</p>
+      <a class="auth-link" routerLink="/login">Return to sign in</a>
+    } @else {
+      <p class="eyebrow">PERSONAL WORKSPACE</p>
+      <h1>{{ heading }}</h1>
+      <p class="auth-copy">{{ description }}</p>
+      @if (message()) { <p class="auth-message" role="status">{{ message() }}</p> }
+      @if (failure()) { <p class="auth-error" role="alert">{{ failure() }}</p> }
+      <form class="auth-form" (ngSubmit)="submit()">
+        @if (mode !== 'reset') {
+          <label>Email address<input type="email" name="email" [(ngModel)]="email" required autocomplete="email"></label>
+        }
+        @if (mode === 'login' || mode === 'register' || mode === 'reset') {
+          <label>Password<input type="password" name="password" [(ngModel)]="password" required minlength="8" [autocomplete]="mode === 'login' ? 'current-password' : 'new-password'"></label>
+        }
+        @if (mode === 'register' || mode === 'reset') {
+          <label>Confirm password<input type="password" name="confirmation" [(ngModel)]="confirmation" required minlength="8" autocomplete="new-password"></label>
+        }
+        <button class="primary-button" type="submit" [disabled]="busy() || !auth.configured">{{ busy() ? 'Please wait…' : actionLabel }}</button>
+      </form>
+      <nav class="auth-links" aria-label="Authentication options">
+        @if (mode === 'login') { <a routerLink="/forgot-password">Forgot password?</a><span>New to FocusOS? <a routerLink="/register">Create an account</a></span> }
+        @if (mode === 'register') { <span>Already have an account? <a routerLink="/login">Sign in</a></span> }
+        @if (mode === 'forgot') { <a routerLink="/login">Back to sign in</a> }
+        @if (mode === 'reset') { <a routerLink="/login">Back to sign in</a> }
+      </nav>
+    }
+  </section>
+</main>

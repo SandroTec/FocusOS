@@ -1,1 +1,18 @@
 
+:host { display: block; }
+.signout-button { border: 0; background: transparent; color: #7d8490; cursor: pointer; font-size: 16px; }
+.signout-button:hover { color: #dce2e8; }
+.app-loading { min-height: 100vh; display: flex; align-items: center; justify-content: center; gap: 11px; color: #9aa2ad; font-size: 16px; }
+.store-error { position: fixed; z-index: 30; right: 22px; bottom: 22px; display: flex; align-items: center; gap: 16px; max-width: min(460px, calc(100vw - 32px)); padding: 13px 16px; border: 1px solid rgba(242,118,146,.25); border-radius: 10px; background: #21161b; color: #f3a0b4; box-shadow: 0 12px 50px #0008; font-size: 16px; }
+.store-error button { border: 0; background: transparent; color: inherit; cursor: pointer; font-size: 18px; }
+.import-backdrop { position: fixed; z-index: 20; inset: 0; display: grid; place-items: center; padding: 20px; background: rgba(0,0,0,.72); backdrop-filter: blur(9px); }
+.import-dialog { width: min(100%, 470px); padding: 28px; border: 1px solid rgba(74,216,192,.23); border-radius: 16px; background: #11151a; box-shadow: 0 25px 100px #000a; }
+.import-dialog h2 { margin: 0; font-size: 23px; }
+.import-dialog p:not(.eyebrow) { color: #939aa5; font-size: 16px; line-height: 1.6; }
+.import-dialog ul { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; padding: 0; list-style: none; color: #c4cbd3; font-size: 16px; }
+.import-dialog .button-row { flex-wrap: wrap; margin: 21px 0 14px; }
+.import-dialog small { display: block; color: #717985; font-size: 16px; line-height: 1.6; }
+@media (max-width: 760px) {
+ .signout-button, .app-loading, .store-error, .import-dialog p:not(.eyebrow), .import-dialog ul, .import-dialog small { font-size: 14px; } }
+
+
