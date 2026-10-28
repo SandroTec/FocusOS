@@ -1,5 +1,5 @@
 <section class="page-layout">
-  <div class="page-intro"><p class="eyebrow">MOVE WITH INTENTION</p><h2>Sports tracker</h2><p>Record workouts and keep an eye on your weekly activity.</p></div>
+  <div class="page-intro"><p class="eyebrow">SPORT</p><h2>Sport tracker</h2><p>Record workouts and keep an eye on your weekly activity.</p></div>
   <div class="summary-strip"><div><span>Workouts this week</span><strong>{{ weekStats().count }}</strong></div><div><span>Time in motion</span><strong>{{ durationLabel(weekStats().minutes) }}</strong></div><div><span>Total entries</span><strong>{{ data().sports.length }}</strong></div></div>
   <div class="tracker-grid sports-layout">
     <article class="panel form-panel"><div class="panel-heading"><div><p class="eyebrow">LOG A WORKOUT</p><h3>{{ editingId ? 'Edit activity' : 'New activity' }}</h3></div></div>
