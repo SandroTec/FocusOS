@@ -1,0 +1,48 @@
+:host { display: block; }
+.goal-message,.goal-error { padding: 11px 14px; border-radius: 10px; font-size: 16px; }
+.goal-message { color: #65dfbd; background: rgba(63,218,179,.08); border: 1px solid rgba(63,218,179,.16); }
+.goal-error { color: #ff8a9b; background: rgba(255,99,130,.08); border: 1px solid rgba(255,99,130,.18); }
+.goal-form-panel { padding: 22px 24px; }
+.goal-form { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 14px; margin-top: 18px; }
+.goal-form label { display: flex; flex-direction: column; gap: 7px; color: #aab0b8; font-size: 16px; }
+.goal-form .goal-toggle { flex-direction:row;align-items:center;gap:10px; }
+.goal-form .goal-toggle input { width:18px;height:18px;min-height:18px; }
+.goal-form input,.goal-form select { width: 100%; min-height: 38px; padding: 9px 11px; border: 1px solid rgba(255,255,255,.1); border-radius: 9px; outline: none; background: #0d1014; color: #eef0f3; font: inherit; }
+.goal-form input:focus,.goal-form select:focus { border-color: rgba(75,220,190,.55); }
+.goal-form input:disabled,.goal-form select:disabled { opacity: .55; }
+.goal-form label small,.optional-label,.goal-form-note { color: #737c87; font-size: 16px; }
+.goal-form-note { grid-column: 1 / -1; margin: 0; }
+.goal-form .button-row { grid-column: 1 / -1; margin-top: 2px; }
+.goal-list { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; }
+.goal-panel { padding: 21px 22px 15px; }
+.goal-panel-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.goal-panel-head h3,.goal-empty h3 { margin: 5px 0 0; font: 600 17px 'Segoe UI',sans-serif; letter-spacing: -.3px; }
+.goal-period { flex: none; color: #848d99; font-size: 16px; }
+.goal-progress-track { height: 7px; margin: 25px 0 11px; overflow: hidden; border-radius: 9px; background: #282d33; }
+.goal-progress-track span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg,#43d6c0,#6bdfab); box-shadow: 0 0 14px rgba(68,224,183,.3); transition: width .25s ease; }
+.goal-progress-copy { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.goal-progress-copy strong { font:600 16px Manrope,sans-serif; }
+.goal-progress-copy strong small { color: #818994; font:400 16px 'Segoe UI',sans-serif; }
+.goal-progress-copy>span { color: #929aa4; font-size: 16px; text-align: right; }
+.goal-progress-copy>span.complete,.history-row i.achieved { color: #61dcb6; }
+.goal-actions { display: flex; gap: 13px; margin-top: 18px; padding-bottom: 12px; }
+.goal-history { border-top: 1px solid rgba(255,255,255,.07); color: #9ba2ac; font-size: 16px; }
+.goal-history summary,.other-goals summary { padding: 12px 0; cursor: pointer; color: #8d96a1; }
+.history-row,.other-goal-row { display: flex; align-items: center; justify-content: space-between; gap: 9px; padding: 8px 0; border-top: 1px solid rgba(255,255,255,.045); }
+.history-row strong { color: #d8dce1; font-size: 16px; font-weight: 500; }
+.history-row i { color: #f3a263; font-size: 16px; font-style: normal; }
+.goal-panel-note { margin: 12px 0; color: #818995; font-size: 16px; }
+.goal-empty { padding: 24px; color: #8b939e; font-size: 16px; }
+.goal-empty p { margin-top: 9px; }
+.goal-empty>div { display: flex; gap: 16px; margin-top: 17px; }
+.goal-empty a { color: #67ddbd; font-size: 16px; text-decoration: none; }
+.goal-empty a:hover { color: #b2f5e2; }
+.other-goals { padding: 0 4px; color: #8c949e; font-size: 16px; }
+.other-goal-row strong { color: #d6d9de; }
+.other-goal-row span { margin-left: 10px; color: #79818b; font-size: 16px; text-transform: capitalize; }
+@media (max-width: 900px) { .goal-form { grid-template-columns: repeat(2,minmax(0,1fr)); }.goal-list { grid-template-columns: 1fr; } }
+@media (max-width: 520px) { .goal-form { grid-template-columns: 1fr; }.goal-form-note,.goal-form .button-row { grid-column: auto; }.goal-form-panel,.goal-panel { padding-inline: 16px; }.goal-progress-copy { align-items: flex-start; flex-direction: column; }.goal-progress-copy>span { text-align: left; }.goal-panel-head { flex-direction: column; }.goal-period { margin-top: -5px; } }
+@media (max-width: 760px) {
+ .goal-message,.goal-error, .goal-form label, .goal-form label small,.optional-label,.goal-form-note, .goal-period, .goal-progress-copy strong, .goal-progress-copy strong small, .goal-progress-copy>span, .goal-history, .history-row strong, .history-row i, .goal-panel-note, .goal-empty, .goal-empty a, .other-goals, .other-goal-row span { font-size: 14px; } }
+
+

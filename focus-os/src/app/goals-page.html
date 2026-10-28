@@ -1,0 +1,55 @@
+<section class="page-layout goals-page">
+  <div class="page-intro"><p class="eyebrow">INTENTION INTO ACTION</p><h2>Goals</h2><p>Set a target, see where you stand, and know what remains.</p></div>
+
+  @if (message) { <p class="goal-message" role="status">{{ message }}</p> }
+  @if (store.error()) { <p class="goal-error" role="alert">{{ store.error() }}</p> }
+
+  <article class="panel form-panel goal-form-panel">
+    <div class="panel-heading"><div><p class="eyebrow">{{ editingId ? 'UPDATE A DEFINITION' : 'SET AN INTENTION' }}</p><h3>{{ editingId ? 'Edit goal' : 'Create a goal' }}</h3></div></div>
+    <form class="goal-form" (ngSubmit)="save()">
+      <label>Goal name<input name="goalTitle" [(ngModel)]="title" maxlength="80" required placeholder="e.g. Build a consistent learning habit"></label>
+      <label>Activity area<select name="goalDomain" [(ngModel)]="domain" (ngModelChange)="domainChanged()"><option value="focus">Focus</option><option value="sport">Sport</option><option value="habit">Habits</option></select></label>
+      <label>Measure<select name="goalMetric" [(ngModel)]="metric">@for (option of metricOptions(); track option.value) { <option [value]="option.value">{{ option.label }}</option> }</select></label>
+      <label>Target<input name="goalTarget" type="number" [(ngModel)]="targetValue" min="1" step="1" required></label>
+      <label>Repeat<select name="goalPeriod" [(ngModel)]="period" [disabled]="editingId !== null" (ngModelChange)="periodChanged()"><option value="week">Every week</option><option value="month">Every month</option></select></label>
+      @if (!editingId) { <label>Start tracking from<input name="goalStart" type="date" [(ngModel)]="startDate" required (change)="alignStartDate()"><small>Choose a past period to evaluate your existing history.</small></label> }
+      @if (domain === 'focus') {
+        <label>Activity area<select name="goalFocusCategory" [(ngModel)]="focusCategory"><option value="">All activity areas</option>@for (category of categories; track category) { <option [value]="category">{{ category === 'Project' ? 'Project work' : category }}</option> }</select></label>
+        <label class="goal-toggle"><input name="goalDeepWork" type="checkbox" [(ngModel)]="deepWorkOnly"><span>Deep Work sessions only</span></label>
+      }
+      @if (domain === 'sport') { <label>Sport type <span class="optional-label">Optional</span><input name="goalSport" [(ngModel)]="sportName" maxlength="48" placeholder="e.g. Running"></label> }
+      @if (domain === 'habit') { <label>Habit <span class="optional-label">Optional</span><select name="goalHabit" [(ngModel)]="habitId"><option value="">All habits</option>@for (habit of habits(); track habit.id) { <option [value]="habit.id">{{ habit.name }}</option> }</select></label> }
+      @if (editingId) { <p class="goal-form-note">Your revised target and filters take effect at the start of the next period. The current period keeps its original definition.</p> }
+      <div class="button-row"><button class="primary-button" type="submit" [disabled]="store.saving()">{{ store.saving() ? 'Saving…' : editingId ? 'Save revision' : 'Create goal' }}</button>@if (editingId) { <button class="secondary-button" type="button" (click)="cancelEdit()">Cancel</button> }</div>
+    </form>
+  </article>
+
+  @if (store.loading()) {
+    <article class="panel goal-empty"><span class="pulse-dot"></span> Loading your goals…</article>
+  } @else if (activeGoals().length) {
+    <section class="goal-list" aria-label="Active goals">
+      @for (goal of activeGoals(); track goal.id) {
+        <article class="panel goal-panel">
+          @if (current(goal); as progress) {
+            <div class="goal-panel-head"><div><p class="eyebrow">{{ progress.version.domain }} · {{ progress.version.period === 'week' ? 'THIS WEEK' : 'THIS MONTH' }}</p><h3>{{ progress.version.title }}</h3></div><span class="goal-period">{{ progress.range.label }}</span></div>
+            <div class="goal-progress-track" role="progressbar" [attr.aria-valuenow]="progress.percent" aria-valuemin="0" aria-valuemax="100" [attr.aria-label]="progress.version.title + ' progress'"><span [style.width.%]="progress.percent"></span></div>
+            <div class="goal-progress-copy"><strong>{{ valueLabel(progress.value, progress.version.metric) }} <small>of {{ valueLabel(progress.version.targetValue, progress.version.metric) }}</small></strong><span [class.complete]="progress.achieved">{{ progress.achieved ? 'Target reached' : valueLabel(progress.remaining, progress.version.metric) + ' to go' }}</span></div>
+          } @else { <div class="goal-panel-head"><div><p class="eyebrow">UPCOMING</p><h3>{{ goal.versions.at(-1)?.title }}</h3></div></div><p class="goal-panel-note">This goal starts in its first defined period.</p> }
+          <div class="goal-actions"><button class="row-button" (click)="edit(goal)">Edit</button><button class="row-button" (click)="togglePause(goal)">Pause</button><button class="row-button danger" (click)="store.setStatus(goal.id, 'archived')">Archive</button></div>
+          <details class="goal-history"><summary>Past periods</summary>
+            @for (entry of history(goal); track entry.range.start) { <div class="history-row"><span>{{ entry.range.label }}</span><strong>{{ valueLabel(entry.value, entry.version.metric) }} / {{ valueLabel(entry.version.targetValue, entry.version.metric) }}</strong><i [class.achieved]="entry.achieved">{{ entry.achieved ? 'Reached' : 'In progress' }}</i></div> }
+            @empty { <p class="goal-panel-note">No earlier defined periods yet.</p> }
+          </details>
+        </article>
+      }
+    </section>
+  } @else {
+    <article class="panel goal-empty"><h3>No active goals yet</h3><p>Create a goal above. FocusOS will evaluate it from the activity you already track.</p><div><a routerLink="/focus">Log focus</a><a routerLink="/sports">Log sport</a><a routerLink="/habits">Manage habits</a></div></article>
+  }
+
+  @if (otherGoals().length) {
+    <details class="other-goals"><summary>Paused and archived goals ({{ otherGoals().length }})</summary>
+      @for (goal of otherGoals(); track goal.id) { <div class="other-goal-row"><div><strong>{{ goal.versions.at(-1)?.title }}</strong><span>{{ goal.status }}</span></div>@if (goal.status === 'paused') { <button class="row-button" (click)="togglePause(goal)">Resume</button> }</div> }
+    </details>
+  }
+</section>

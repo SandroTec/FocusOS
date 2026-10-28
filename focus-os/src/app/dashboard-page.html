@@ -2,8 +2,8 @@
   <article class="panel focus-panel">
     <div class="panel-heading"><div><p class="eyebrow">YOUR PERFORMANCE</p><h2>Focus</h2></div><a class="subtle-link" routerLink="/focus">Open tracker ↗</a></div>
     <div class="focus-content">
-      <div class="focus-ring" [style.background]="'conic-gradient(from 218deg, #35dbd0, #42e7bd ' + (score() * 0.28) + '%, #40d9e7 ' + (score() * 0.52) + '%, #8772ff ' + (score() * 0.72) + '%, #ff6382 ' + score() + '%, transparent ' + score() + '% 100%)'"><div class="ring-inner"><strong>{{ score() }}<span>%</span></strong><small>FOCUS SCORE</small></div></div>
-      <div class="focus-stats"><div><span class="stat-label">Deep work this week</span><strong>{{ hours(metrics().deepMinutes) }}</strong><small>{{ metrics().sessions.length }} recorded sessions</small></div><div><span class="stat-label">Flow rating</span><strong class="flow">{{ metrics().sessions.length ? 'Active' : '—' }}</strong><small><span class="pulse-dot"></span> Based on your log</small></div></div>
+      <div class="category-ring" [style.background]="categoryChart()" role="img" [attr.aria-label]="'Weekly activity areas: Project work ' + hours(metrics().projectMinutes) + ', Learning ' + hours(metrics().learning) + ', Other ' + hours(metrics().otherMinutes)"><div class="ring-inner"><strong>{{ hours(metrics().weeklyMinutes) }}</strong><small>THIS WEEK</small></div></div>
+      <div class="category-stats"><div><span><i class="legend-dot violet"></i> Project work</span><strong>{{ hours(metrics().projectMinutes) }}</strong></div><div><span><i class="legend-dot cyan"></i> Learning</span><strong>{{ hours(metrics().learning) }}</strong></div><div><span><i class="legend-dot slate"></i> Other</span><strong>{{ hours(metrics().otherMinutes) }}</strong></div><div><span><i class="legend-dot mint"></i> Deep Work <small>subset</small></span><strong>{{ hours(metrics().deepMinutes) }}</strong></div></div>
     </div><div class="panel-glow"></div>
   </article>
 
@@ -21,7 +21,27 @@
 
   <article class="panel weekly-panel"><div class="panel-heading"><div><p class="eyebrow">YOUR WEEK AT A GLANCE</p><h2>Activity</h2></div><span class="trend-pill">{{ metrics().sportCount }} workouts</span></div>
     <div class="activity-stats"><div><span class="legend-dot cyan"></span><strong>{{ hours(metrics().learning) }}</strong><small>Learning</small></div><div><span class="legend-dot violet"></span><strong>{{ hours(metrics().projectMinutes) }}</strong><small>Projects</small></div><div><span class="legend-dot orange"></span><strong>{{ metrics().habitRate }}%</strong><small>Habit completion</small></div></div>
-    <div class="goal-card"><div class="goal-copy"><span>Weekly deep work goal</span><strong>{{ hours(metrics().deepMinutes) }} <small>of {{ hours(metrics().goal) }}</small></strong></div><div class="progress-track"><span [style.width.%]="goalPercent()"></span></div></div>
+    @if (metrics().goal > 0) { <div class="goal-card"><div class="goal-copy"><span>Weekly deep work goal</span><strong>{{ hours(metrics().deepMinutes) }} <small>of {{ hours(metrics().goal) }}</small></strong></div><div class="progress-track"><span [style.width.%]="goalPercent()"></span></div></div> }
+    @else { <div class="goal-card"><div class="goal-copy"><span>No active weekly deep work goal</span><a class="action-link" routerLink="/goals">Create one →</a></div></div> }
     <p class="insight-note"><b>✦ A small insight</b>{{ insight() }}</p>
+  </article>
+
+  <article class="panel dashboard-goals-panel">
+    <div class="panel-heading"><div><p class="eyebrow">YOUR GOALS</p><h2>Progress</h2></div><a class="subtle-link" routerLink="/goals">Manage goals ↗</a></div>
+    @if (goalProgress().length) {
+      <div class="dashboard-goal-list">
+        @for (goal of goalProgress(); track goal.id) {
+          <div class="dashboard-goal-row">
+            <div class="dashboard-goal-title"><strong>{{ goal.title }}</strong><span>{{ goal.domain }} · {{ goal.period }} · {{ goal.evaluation.range.label }}</span></div>
+            <div class="dashboard-goal-details">
+              <div class="dashboard-goal-track" role="progressbar" [attr.aria-label]="goal.title + ' progress'" [attr.aria-valuenow]="goal.evaluation.percent" aria-valuemin="0" aria-valuemax="100"><span [style.width.%]="goal.evaluation.percent"></span></div>
+              <div class="dashboard-goal-values"><strong>{{ valueLabel(goal.evaluation.value, goal.evaluation.version.metric) }} <small>of {{ valueLabel(goal.evaluation.version.targetValue, goal.evaluation.version.metric) }}</small></strong><span>{{ goal.evaluation.achieved ? 'Goal reached' : valueLabel(goal.evaluation.remaining, goal.evaluation.version.metric) + ' to go' }}</span></div>
+            </div>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="dashboard-goals-empty"><p>No active goals to show yet.</p><a class="action-link" routerLink="/goals">Create a goal →</a></div>
+    }
   </article>
 </section>
